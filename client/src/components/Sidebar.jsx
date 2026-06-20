@@ -17,9 +17,12 @@ export default function Sidebar({ novels, activeId, activeView, onViewChange, on
           <div key={n.id}
             className={`menu-item${activeId === n.id ? ' active' : ''}`}
             onClick={() => onSelect(n.id, null)}
-            style={{ paddingLeft: 36, fontSize: 12 }}
+            style={{ paddingLeft: 36, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
           >
-            📄 {n.title}
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>📄 {n.title}</span>
+            <span style={{ fontSize: 10, color: '#b0a898', marginLeft: 6, flexShrink: 0 }}>
+              {n.totalWords ? (n.totalWords > 1000 ? `${(n.totalWords / 1000).toFixed(0)}k` : n.totalWords) : ''}字
+            </span>
           </div>
         ))}
       </>

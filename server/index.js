@@ -142,6 +142,7 @@ app.get('/api/novels/overview', auth, (req, res) => {
   const result = novels.map(n => {
     const outlineCount = db.prepare('SELECT COUNT(*) as count FROM outlines WHERE novel_id = ?').get(n.id);
     const contentCount = db.prepare("SELECT COUNT(*) as count FROM outlines WHERE novel_id = ? AND LENGTH(content) > 100").get(n.id);
+    const totalWords = db.prepare("SELECT COALESCE(SUM(LENGTH(content)), 0) as total FROM outlines WHERE novel_id = ?").get(n.id);
     const hasChapters = outlineCount.count > 0;
     const allDone = hasChapters && contentCount.count >= outlineCount.count;
 
@@ -157,6 +158,7 @@ app.get('/api/novels/overview', auth, (req, res) => {
       status,
       chapters: outlineCount.count,
       doneChapters: contentCount.count,
+      totalWords: totalWords.total,
       updatedAt: n.updatedAt
     };
   });
