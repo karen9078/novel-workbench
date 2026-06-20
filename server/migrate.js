@@ -5,34 +5,33 @@
  */
 const fs = require('fs');
 const path = require('path');
-const db = require('./db');
-
-const DATA_DIR = path.join(__dirname, 'data');
-const NOVELS_FILE = path.join(DATA_DIR, 'novels.json');
-const CHARS_FILE = path.join(DATA_DIR, 'characters.json');
-const OUTLINES_FILE = path.join(DATA_DIR, 'outlines.json');
 
 function readJSON(file) {
   try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
   catch { return []; }
 }
 
-// 检查是否已有数据
-const existingCount = db.prepare('SELECT COUNT(*) as count FROM novels').get();
-if (existingCount.count > 0) {
-  console.log(`⚠️  数据库中已有 ${existingCount.count} 部小说，跳过迁移。`);
-  console.log('   如需重新迁移，请删除 server/data/app.db 再运行。');
-  process.exit(0);
-}
+// 导出迁移函数，供 index.js 自动调用
+function runMigration(db) {
+  const DATA_DIR = path.join(__dirname, 'data');
+  const NOVELS_FILE = path.join(DATA_DIR, 'novels.json');
+  const CHARS_FILE = path.join(DATA_DIR, 'characters.json');
+  const OUTLINES_FILE = path.join(DATA_DIR, 'outlines.json');
 
-const novels = readJSON(NOVELS_FILE);
-const chars = readJSON(CHARS_FILE);
-const outlines = readJSON(OUTLINES_FILE);
+  const existingCount = db.prepare('SELECT COUNT(*) as count FROM novels').get();
+  if (existingCount.count > 0) {
+    console.log(`⚠️  数据库中已有 ${existingCount.count} 部小说，跳过迁移。`);
+    return;
+  }
 
-if (novels.length === 0) {
-  console.log('⚠️  没有找到小说数据，跳过迁移。');
-  process.exit(0);
-}
+  const novels = readJSON(NOVELS_FILE);
+  const chars = readJSON(CHARS_FILE);
+  const outlines = readJSON(OUTLINES_FILE);
+
+  if (novels.length === 0) {
+    console.log('⚠️  没有找到小说数据，跳过迁移。');
+    return;
+  }
 
 console.log(`📚 发现 ${novels.length} 部小说, ${chars.length} 个角色, ${outlines.length} 个章纲`);
 
@@ -109,8 +108,14 @@ const transaction = db.transaction(() => {
 });
 
 transaction();
+  console.log(`🎉 已导入 ${novels.length} 部小说, ${chars.length} 个角色, ${outlines.length} 个章纲`);
+}
 
-console.log('\n🎉 数据迁移完成！');
-console.log('📌 注意：这些数据已绑定到系统账号。你第一个注册时，需要联系管理员绑定数据。');
-console.log('   或者注册后运行这个 SQL 把数据改到你的账号下：');
-console.log('   UPDATE novels SET user_id = \'你的用户ID\' WHERE user_id = \'00000000-0000-0000-0000-000000000001\';');
+// 直接运行脚本时执行
+if (require.main === module) {
+  const db = require('./db');
+  runMigration(db);
+  console.log('📌 数据已绑定到系统账号 (00000000-0000-...)');
+}
+
+module.exports = { runMigration };

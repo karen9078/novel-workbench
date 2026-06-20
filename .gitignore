@@ -1,6 +1,7 @@
 node_modules/
 client/dist/
-server/data/app.db
+server/data/
 .env
 *.log
 .DS_Store
+.reasonix/
