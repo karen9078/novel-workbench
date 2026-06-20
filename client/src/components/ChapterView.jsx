@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function ChapterView({ chapter, onClose, onPolish, onContinue, onComplete, onCopy, onSaveContent, onRevise, polishing, continuing, completing, revising }) {
   const [editing, setEditing] = useState(false);
@@ -10,6 +10,22 @@ export default function ChapterView({ chapter, onClose, onPolish, onContinue, on
   const [completeAfter, setCompleteAfter] = useState('');
   const [showRevise, setShowRevise] = useState(false);
   const [reviseFeedback, setReviseFeedback] = useState('');
+  const saveTimer = useRef(null);
+  const [saving, setSaving] = useState(false);
+
+  // 自动保存（停止输入2秒后）
+  useEffect(() => {
+    if (!editing || editText === chapter?.content) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      setSaving(true);
+      try {
+        await onSaveContent(editText);
+      } catch (e) {}
+      setSaving(false);
+    }, 2000);
+    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
+  }, [editText, editing]);
 
   if (!chapter) return null;
 
@@ -80,6 +96,8 @@ export default function ChapterView({ chapter, onClose, onPolish, onContinue, on
       <div className="chapter-actions">
         {editing ? (
           <>
+            {saving && <span style={{ fontSize: 11, color: '#c9a84c', lineHeight: '32px' }}>⏳ 保存中...</span>}
+            {!saving && editText !== chapter?.content && <span style={{ fontSize: 11, color: '#b0a898', lineHeight: '32px' }}>✅ 已自动保存</span>}
             <button className="polish-btn" onClick={handleSave}>💾 保存</button>
             <button className="copy-btn" onClick={handleCancel}>取消</button>
           </>
