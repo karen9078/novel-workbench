@@ -7,6 +7,7 @@ const FORMATS = [
   { id: 'storytelling', icon: '🎙️', label: '说书稿', tag: '适合音频制作' },
   { id: 'shortvideo', icon: '📱', label: '短视频脚本', tag: '适合抖音/快手' },
   { id: 'outline',    icon: '📋', label: '章节梗概', tag: '200字浓缩核心情节' },
+  { id: 'check',      icon: '🔍', label: '平台检测', tag: '审核安全评估' },
 ];
 
 const FORMAT_PROMPTS = {
@@ -44,6 +45,22 @@ const FORMAT_PROMPTS = {
 直接输出，不要加说明。`,
 
   outline: `请把下面这章小说浓缩成**200字左右的梗概**，保留核心情节、冲突和转折。直接输出，不要加说明。`,
+
+  check: `你是一个资深的内容安全审核专家，熟悉中国各大内容平台的审核规则。请分析以下文字，从这几个维度给出评估：
+
+## 各平台风险评估
+- **微信公众平台**：标题夸张？诱导分享？敏感词？AI味浓度？
+- **知乎**：是否像营销号？内容质量？专业度？
+- **抖音/快手**：开头是否吸引人？完播率预估？违规风险？
+- **小红书**：是否像广告？真实感？限流风险？
+
+## 综合评分
+- 🤖 AI味浓度：0-100%
+- 🚫 违规风险：高/中/低
+- 📝 人工感：0-100%
+- ✅ 综合评级：直接能发 / 建议修改再发 / 不建议发
+
+输出格式要简洁清晰，每个平台用 1-2 句话评估，最后给评分汇总。`,
 };
 
 const FORMAT_TIPS = {
@@ -119,6 +136,17 @@ const FORMAT_TIPS = {
     themeColor: '#6b5b95',
     bgGradient: 'linear-gradient(135deg, #f8f6fc 0%, #eeeaf8 100%)',
   },
+  check: {
+    title: '🔍 平台审核检测',
+    tag: '发前必测',
+    desc: '将你要发布的内容粘贴进来，AI会模拟微信、知乎、抖音、小红书等平台的审核规则，评估违规风险、AI味浓度、综合可发度。',
+    who: '所有准备发布内容的创作者',
+    output: '各平台风险评估 + 综合评分',
+    lines: ['粘贴内容后点击检测', '覆盖微信/知乎/抖音/小红书', '给出修改建议'],
+    example: `微信公众平台：⚠️ 标题有诱导嫌疑\n知乎：✅ 内容质量合格\n抖音：⚠️ 开头不够吸引人\n小红书：✅ 真实感较强\n\nAI味浓度：35% | 违规风险：低 | 综合评级：建议修改后再发`,
+    themeColor: '#e74c3c',
+    bgGradient: 'linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%)',
+  },
 };
 
 export default function ConverterPage({ initialFormat, onBack }) {
@@ -130,6 +158,7 @@ export default function ConverterPage({ initialFormat, onBack }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [novelLoading, setNovelLoading] = useState(false);
+  const [checkText, setCheckText] = useState('');
 
   useEffect(() => {
     setNovelLoading(true);
@@ -155,6 +184,25 @@ export default function ConverterPage({ initialFormat, onBack }) {
   const selectedNovel = novels.find(n => n.id === selectedNovelId);
 
   const handleConvert = async () => {
+    // 平台检测：使用粘贴的文本
+    if (format === 'check') {
+      if (!checkText.trim()) { setResult('❌ 请粘贴要检测的内容'); return; }
+      setLoading(true); setResult(null);
+      try {
+        const prompt = FORMAT_PROMPTS.check + `\n\n## 待检测内容\n${checkText.substring(0, 4000)}`;
+        const res = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
+        });
+        const data = await res.json();
+        if (data.result) setResult(data.result);
+        else setResult('❌ ' + (data.error || '检测失败'));
+      } catch (e) { setResult('❌ 网络错误: ' + e.message); }
+      setLoading(false);
+      return;
+    }
+
     if (!selectedChapter || !selectedNovelId) return;
     setLoading(true); setResult(null);
     try {
@@ -201,6 +249,24 @@ export default function ConverterPage({ initialFormat, onBack }) {
       <div className="converter-body">
         {/* 选择区 */}
         <div className="converter-select-area" style={{ background: tip.bgGradient, borderBottom: `3px solid ${tip.themeColor}` }}>
+          {format === 'check' ? (
+            /* 平台检测：粘贴文本 */
+            <div>
+              <div className="converter-select-row" style={{ marginBottom: 12 }}>
+                <div className="converter-select-group" style={{ flex: 1, maxWidth: '100%' }}>
+                  <label>📝 粘贴你要检测的内容</label>
+                  <textarea value={checkText} onChange={e => { setCheckText(e.target.value); setResult(null); }}
+                    placeholder="把你要发布到微信/知乎/抖音/小红书的内容粘贴在这里..."
+                    style={{ width: '100%', minHeight: 120, padding: '10px 14px', borderRadius: 8, border: '1px solid #e2dcd2', background: '#fff', fontSize: 13, fontFamily: 'inherit', resize: 'vertical', outline: 'none' }}
+                  />
+                </div>
+              </div>
+              <button className="converter-convert-btn" onClick={handleConvert} disabled={!checkText.trim() || loading}
+                style={{ background: tip.themeColor, color: '#fff' }}>
+                {loading ? '⏳ 检测中...' : '🔍 开始检测'}
+              </button>
+            </div>
+          ) : (
           <div className="converter-select-row">
             <div className="converter-select-group">
               <label>📖 选择作品</label>
@@ -222,6 +288,7 @@ export default function ConverterPage({ initialFormat, onBack }) {
               {loading ? '⏳ 转换中...' : `🔄 转为${FORMATS.find(f => f.id === format)?.label}`}
             </button>
           </div>
+          )}
         </div>
 
         <div className="converter-format-body">
