@@ -1234,6 +1234,13 @@ db.prepare(`
 // 确保管理员有所有数据
 const adminData = db.prepare('SELECT COUNT(*) as count FROM novels WHERE user_id = ?').get(MIGRATION_USER_ID);
 if (adminData.count === 0) {
+  // 尝试从 JSON 文件导入数据（首次部署时）
+  try {
+    const { execSync } = require('child_process');
+    execSync('node ' + path.join(__dirname, 'migrate.js'), { stdio: 'inherit' });
+  } catch (e) {
+    // JSON 文件不存在则忽略
+  }
   // 把散落的旧数据归到管理员名下
   db.prepare("UPDATE novels SET user_id = ? WHERE user_id != ?").run(MIGRATION_USER_ID, MIGRATION_USER_ID);
 }
