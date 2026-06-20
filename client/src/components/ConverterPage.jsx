@@ -159,6 +159,7 @@ export default function ConverterPage({ initialFormat, onBack }) {
   const [loading, setLoading] = useState(false);
   const [novelLoading, setNovelLoading] = useState(false);
   const [checkText, setCheckText] = useState('');
+  const [checkHistory, setCheckHistory] = useState([]);
 
   useEffect(() => {
     setNovelLoading(true);
@@ -183,6 +184,14 @@ export default function ConverterPage({ initialFormat, onBack }) {
   const chapters = outlines.filter(o => (o.content && o.content.length > 50) || (o.summary && o.summary.length > 20));
   const selectedNovel = novels.find(n => n.id === selectedNovelId);
 
+  // 切换到平台检测时加载历史
+  useEffect(() => {
+    if (format === 'check') {
+      fetch('/api/check/history', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+        .then(r => r.json()).then(setCheckHistory).catch(() => {});
+    }
+  }, [format]);
+
   const handleConvert = async () => {
     // 平台检测：使用粘贴的文本
     if (format === 'check') {
@@ -196,8 +205,19 @@ export default function ConverterPage({ initialFormat, onBack }) {
           body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
         });
         const data = await res.json();
-        if (data.result) setResult(data.result);
-        else setResult('❌ ' + (data.error || '检测失败'));
+        if (data.result) {
+          setResult(data.result);
+          // 保存到历史
+          fetch('/api/check/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            body: JSON.stringify({ inputText: checkText, resultText: data.result })
+          }).then(() => {
+            // 刷新历史列表
+            fetch('/api/check/history', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+              .then(r => r.json()).then(setCheckHistory).catch(() => {});
+          }).catch(() => {});
+        } else setResult('❌ ' + (data.error || '检测失败'));
       } catch (e) { setResult('❌ 网络错误: ' + e.message); }
       setLoading(false);
       return;
@@ -335,7 +355,7 @@ export default function ConverterPage({ initialFormat, onBack }) {
           {result && !loading && (
             <div className="converter-result" style={{ border: `1px solid ${tip.themeColor}`, borderLeft: `4px solid ${tip.themeColor}`, background: '#faf8f5' }}>
               <div className="converter-result-header" style={{ borderBottom: '1px solid #e8e2d8' }}>
-                <span>{FORMATS.find(f => f.id === format)?.icon} 第{selectedChapter}章 · {FORMATS.find(f => f.id === format)?.label}</span>
+                <span>{FORMATS.find(f => f.id === format)?.icon} {format === 'check' ? '检测结果' : `第${selectedChapter}章 · ${FORMATS.find(f => f.id === format)?.label}`}</span>
                 <button className="converter-copy-btn" onClick={() => navigator.clipboard.writeText(result)}
                   style={{ background: '#ece8e0', color: '#666' }}>📋 复制</button>
               </div>
@@ -343,7 +363,34 @@ export default function ConverterPage({ initialFormat, onBack }) {
             </div>
           )}
 
-          {!selectedNovelId && !loading && !result && (
+          {/* 平台检测历史 */}
+          {format === 'check' && checkHistory.length > 0 && (
+            <div className="converter-format-card" style={{ border: '1px solid #e2dcd2', borderLeft: '4px solid #e74c3c', background: '#faf8f5' }}>
+              <div className="converter-format-header" style={{ fontSize: 14 }}>📋 检测历史</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {checkHistory.map(h => (
+                  <div key={h.id} style={{ padding: '10px 14px', background: '#fff', borderRadius: 8, border: '1px solid #e8e2d8', fontSize: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <span style={{ color: '#b0a898', fontSize: 11 }}>{h.created_at?.replace('T', ' ').substring(0, 16)}</span>
+                      <button onClick={() => {
+                        fetch('/api/check/history/' + h.id, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+                          .then(() => fetch('/api/check/history', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+                            .then(r => r.json()).then(setCheckHistory).catch(() => {}));
+                      }} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: 12, padding: 0 }}>✕</button>
+                    </div>
+                    <div style={{ color: '#8a8278', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      📝 {h.input_text?.substring(0, 80)}...
+                    </div>
+                    <div style={{ color: '#666', lineHeight: 1.6, maxHeight: 60, overflow: 'hidden' }}>
+                      {h.result_text?.substring(0, 150)}...
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {format !== 'check' && !selectedNovelId && !loading && !result && (
             <div className="converter-empty"><div style={{ fontSize: 40, marginBottom: 12 }}>📖</div><div>选择一个小说作品开始转换</div></div>
           )}
           {selectedNovelId && chapters.length === 0 && !loading && !result && (

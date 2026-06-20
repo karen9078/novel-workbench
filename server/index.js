@@ -479,6 +479,28 @@ async function withQuota(userId, req, res, aiCall) {
 //  AI 路由（带额度控制）
 // ═══════════════════════════════════
 
+// ─── 平台检测历史 ───
+app.post('/api/check/save', auth, (req, res) => {
+  const { inputText, resultText } = req.body;
+  if (!inputText || !resultText) return res.status(400).json({ error: '缺少参数' });
+  const id = uuidv4();
+  db.prepare('INSERT INTO check_history (id, user_id, input_text, result_text) VALUES (?, ?, ?, ?)')
+    .run(id, req.userId, inputText.substring(0, 500), resultText);
+  res.json({ id });
+});
+
+app.get('/api/check/history', auth, (req, res) => {
+  const records = db.prepare(
+    'SELECT id, input_text, result_text, created_at FROM check_history WHERE user_id = ? ORDER BY created_at DESC LIMIT 50'
+  ).all(req.userId);
+  res.json(records);
+});
+
+app.delete('/api/check/history/:id', auth, (req, res) => {
+  db.prepare('DELETE FROM check_history WHERE id = ? AND user_id = ?').run(req.params.id, req.userId);
+  res.json({ ok: true });
+});
+
 app.post('/api/ai/chat', auth, async (req, res) => {
   try {
     const quota = checkAndResetQuota(req.userId);

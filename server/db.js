@@ -57,6 +57,17 @@ db.exec(`
 
 try { db.exec("ALTER TABLE users ADD COLUMN quota_month TEXT DEFAULT ''"); } catch {}
 
+// 平台审核检测历史
+db.exec(`
+  CREATE TABLE IF NOT EXISTS check_history (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    input_text TEXT NOT NULL,
+    result_text TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+`);
+
 // 平台凭证（微信、知乎等发布账号）
 db.exec(`
   CREATE TABLE IF NOT EXISTS platform_creds (
