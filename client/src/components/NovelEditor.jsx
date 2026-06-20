@@ -55,8 +55,12 @@ export default function NovelEditor({ novelId, onBack, initialTab, initialFormat
 
   const save = async () => {
     if (!novelId || !hasChanges) return;
-    await updateNovel(novelId, { title, summary, setting });
-    setHasChanges(false);
+    try {
+      await updateNovel(novelId, { title, summary, setting });
+      setHasChanges(false);
+    } catch (e) {
+      console.error('保存失败:', e);
+    }
   };
 
   const handleSettingChange = (key, value) => {
