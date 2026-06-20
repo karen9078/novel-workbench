@@ -218,7 +218,7 @@ export default function App() {
 
   // ─── 已登录：主界面 ───
   if (activeId) {
-    return <NovelEditor novelId={activeId} key={activeId + (initialTab || '') + (initialFormat || '')} initialTab={initialTab} initialFormat={initialFormat} onBack={() => { setActiveId(null); setInitialTab(null); setInitialFormat(null); }} />;
+    return <NovelEditor novelId={activeId} key={activeId + (initialTab || '') + (initialFormat || '')} initialTab={initialTab} initialFormat={initialFormat} onBack={() => { setActiveId(null); setInitialTab(null); setInitialFormat(null); loadNovels(); }} />;
   }
 
   return (
