@@ -20,6 +20,7 @@ export default function NovelEditor({ novelId, onBack, initialTab, initialFormat
   const [stats, setStats] = useState({ chapters: 0, words: 0 });
   const [showPublish, setShowPublish] = useState(false);
   const [tabInitialized, setTabInitialized] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
 
   // 如果传入了 initialTab，首次加载时跳转到该标签
   useEffect(() => {
@@ -58,10 +59,12 @@ export default function NovelEditor({ novelId, onBack, initialTab, initialFormat
     try {
       await updateNovel(novelId, { title, summary, setting });
       setHasChanges(false);
+      setSaveMsg('✅ 已保存');
     } catch (e) {
-      alert('❌ 保存失败，请检查网络后重试');
+      setSaveMsg('❌ 保存失败');
       console.error('保存失败:', e);
     }
+    setTimeout(() => setSaveMsg(''), 3000);
   };
 
   const handleSettingChange = (key, value) => {
@@ -114,6 +117,7 @@ export default function NovelEditor({ novelId, onBack, initialTab, initialFormat
           <span>章纲 <strong>{stats.chapters}</strong></span>
           <span>字数 <strong>{stats.words.toLocaleString()}</strong></span>
         </div>
+        {saveMsg && <span style={{ fontSize: 12, color: saveMsg.includes('❌') ? '#e74c3c' : '#27ae60' }}>{saveMsg}</span>}
         <button className="topbar-btn" onClick={save} style={{ background: hasChanges ? '#c9a84c' : 'transparent', color: hasChanges ? '#fff' : '#666', border: 'none' }}>
           {hasChanges ? '💾 保存' : '已保存'}
         </button>
