@@ -1,9 +1,19 @@
 {
   "name": "novel-workbench",
   "version": "1.0.0",
+  "description": "Novel workbench app (server + client)",
   "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "build": "npm --prefix server install && npm --prefix client install && npm --prefix client run build",
-    "start": "node server/index.js"
+    "install:server": "npm --prefix server install",
+    "install:client": "npm --prefix client install",
+    "build": "npm run install:server && npm run install:client && npm --prefix client run build",
+    "dev": "npm --prefix server run dev & npm --prefix client run dev",
+    "start": "node server/index.js",
+    "postinstall": "npm --prefix client run build",
+    "clean": "rm -rf server/node_modules client/node_modules client/dist"
   }
 }
