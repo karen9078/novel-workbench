@@ -59,6 +59,7 @@ export default function NovelEditor({ novelId, onBack, initialTab, initialFormat
       await updateNovel(novelId, { title, summary, setting });
       setHasChanges(false);
     } catch (e) {
+      alert('❌ 保存失败，请检查网络后重试');
       console.error('保存失败:', e);
     }
   };
