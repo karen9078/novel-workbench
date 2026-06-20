@@ -1256,8 +1256,9 @@ db.prepare(`
   ON CONFLICT(id) DO UPDATE SET email = ?, username = ?, password_hash = ?, plan = 'pro'
 `).run(MIGRATION_USER_ID, ADMIN_EMAIL, '管理员', hash, ADMIN_EMAIL, '管理员', hash);
 // 确保管理员有所有数据
-const adminData = db.prepare('SELECT COUNT(*) as count FROM novels WHERE user_id = ?').get(MIGRATION_USER_ID);
-if (adminData.count === 0) {
+// 检查是否已有数据（有数据就不迁移，避免覆盖用户修改）
+const anyNovels = db.prepare('SELECT COUNT(*) as count FROM novels').get();
+if (anyNovels.count === 0) {
   // 首次部署时从 JSON 文件导入数据
   try {
     const { runMigration } = require('./migrate');
