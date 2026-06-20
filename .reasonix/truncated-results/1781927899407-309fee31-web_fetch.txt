@@ -1,0 +1,346 @@
+文本消息 | 微信服务号文档
+https://developers.weixin.qq.com/doc/service/guide/product/message/Receiving_standard_messages.html
+
+<!DOCTYPE html>
+
+文本消息 | 微信服务号文档
+
+服务号 
+
+小程序
+
+小游戏
+
+公众号
+
+服务号
+
+开放平台
+
+企业微信
+
+微信支付
+
+视频号
+
+微信小店
+
+智能对话
+
+腾讯小微
+
+教育平台
+
+取消
+
+查看更多 
+
+指南
+
+服务端 API
+
+中文
+
+中文
+
+EN
+
+取消
+
+指南
+
+当普通微信用户向公众账号发消息时，微信服务器将POST消息的XML数据包到开发者填写的URL上。
+
+请注意：
+
+关于重试的消息排重，推荐使用msgid排重。
+
+微信服务器在五秒内收不到响应会断掉连接，并且重新发起请求，总共重试三次。假如服务器无法保证在五秒内处理并回复，可以直接回复空串，微信服务器不会对此作任何处理，并且不会发起重试。详情请见“发送消息-被动回复消息”。
+
+如果开发者需要对用户消息在5秒内立即做出回应，即使用“发送消息-被动回复消息”接口向用户被动回复消息时，可以在
+
+公众平台官网的开发者中心处设置消息加密。开启加密后，用户发来的消息和开发者回复的消息都会被加密（但开发者通过客服接口等API调用形式向用户发送消息，则不受影响）。关于消息加解密的详细说明，请见“发送消息-被动回复消息加解密说明”。
+各消息类型的推送XML数据包结构如下：
+
+# 文本消息
+
+<code><span class="token tag"><span class="token tag"><span class="token punctuation"><</span>xml</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ToUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[toUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ToUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>FromUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[fromUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>FromUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>CreateTime</span><span class="token punctuation">></span></span>1348831860<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>CreateTime</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgType</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[text]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgType</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Content</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[this is a test]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Content</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgId</span><span class="token punctuation">></span></span>1234567890123456<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgDataId</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgDataId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Idx</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Idx</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>xml</span><span class="token punctuation">></span></span>
+
+</code>
+
+参数 描述
+
+ToUserName 开发者微信号
+
+FromUserName 发送方账号（一个OpenID）
+
+CreateTime 消息创建时间 （整型）
+
+MsgType 消息类型，文本为text
+
+Content 文本消息内容
+
+MsgId 消息id，64位整型
+
+MsgDataId 消息的数据ID（消息如果来自文章时才有）
+
+Idx 多图文时第几篇文章，从1开始（消息如果来自文章时才有）
+
+使用网页调试工具调试该接口
+
+# 图片消息
+
+<code><span class="token tag"><span class="token tag"><span class="token punctuation"><</span>xml</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ToUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[toUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ToUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>FromUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[fromUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>FromUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>CreateTime</span><span class="token punctuation">></span></span>1348831860<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>CreateTime</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgType</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[image]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgType</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>PicUrl</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[this is a url]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>PicUrl</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MediaId</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[media_id]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MediaId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgId</span><span class="token punctuation">></span></span>1234567890123456<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgDataId</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgDataId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Idx</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Idx</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>xml</span><span class="token punctuation">></span></span>
+
+</code>
+
+参数 描述
+
+ToUserName 开发者微信号
+
+FromUserName 发送方账号（一个OpenID）
+
+CreateTime 消息创建时间 （整型）
+
+MsgType 消息类型，图片为image
+
+PicUrl 图片链接（由系统生成）
+
+MediaId 图片消息媒体id，可以调用获取临时素材接口拉取数据。
+
+MsgId 消息id，64位整型
+
+MsgDataId 消息的数据ID（消息如果来自文章时才有）
+
+Idx 多图文时第几篇文章，从1开始（消息如果来自文章时才有）
+
+使用网页调试工具调试该接口
+
+# 语音消息
+
+<code><span class="token tag"><span class="token tag"><span class="token punctuation"><</span>xml</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ToUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[toUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ToUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>FromUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[fromUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>FromUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>CreateTime</span><span class="token punctuation">></span></span>1357290913<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>CreateTime</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgType</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[voice]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgType</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MediaId</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[media_id]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MediaId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Format</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[Format]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Format</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgId</span><span class="token punctuation">></span></span>1234567890123456<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgDataId</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgDataId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Idx</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Idx</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MediaId16K</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[media_id_16k]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MediaId16K</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>xml</span><span class="token punctuation">></span></span>
+
+</code>
+
+参数 描述
+
+ToUserName 开发者微信号
+
+FromUserName 发送方账号（一个OpenID）
+
+CreateTime 消息创建时间 （整型）
+
+MsgType 语音为voice
+
+MediaId 语音消息媒体id，可以调用获取临时素材接口拉取数据，Format为amr时返回8K采样率amr语音。
+
+Format 语音格式，如amr，speex等
+
+MsgId 消息id，64位整型
+
+MsgDataId 消息的数据ID（消息如果来自文章时才有）
+
+Idx 多图文时第几篇文章，从1开始（消息如果来自文章时才有）
+
+MediaId16K 16K采样率语音消息媒体id，可以调用获取临时素材接口拉取数据，返回16K采样率amr/speex语音。
+
+使用网页调试工具调试该接口
+
+# 视频消息
+
+<code><span class="token tag"><span class="token tag"><span class="token punctuation"><</span>xml</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ToUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[toUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ToUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>FromUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[fromUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>FromUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>CreateTime</span><span class="token punctuation">></span></span>1357290913<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>CreateTime</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgType</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[video]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgType</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MediaId</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[media_id]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MediaId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ThumbMediaId</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[thumb_media_id]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ThumbMediaId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgId</span><span class="token punctuation">></span></span>1234567890123456<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgDataId</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgDataId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Idx</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Idx</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>xml</span><span class="token punctuation">></span></span>
+
+</code>
+
+参数 描述
+
+ToUserName 开发者微信号
+
+FromUserName 发送方账号（一个OpenID）
+
+CreateTime 消息创建时间 （整型）
+
+MsgType 视频为video
+
+MediaId 视频消息媒体id，可以调用获取临时素材接口拉取数据。
+
+ThumbMediaId 视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
+
+MsgId 消息id，64位整型
+
+MsgDataId 消息的数据ID（消息如果来自文章时才有）
+
+Idx 多图文时第几篇文章，从1开始（消息如果来自文章时才有）
+
+使用网页调试工具调试该接口
+
+# 小视频消息
+
+<code><span class="token tag"><span class="token tag"><span class="token punctuation"><</span>xml</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ToUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[toUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ToUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>FromUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[fromUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>FromUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>CreateTime</span><span class="token punctuation">></span></span>1357290913<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>CreateTime</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgType</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[shortvideo]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgType</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MediaId</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[media_id]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MediaId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ThumbMediaId</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[thumb_media_id]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ThumbMediaId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgId</span><span class="token punctuation">></span></span>1234567890123456<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgDataId</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgDataId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Idx</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Idx</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>xml</span><span class="token punctuation">></span></span>
+
+</code>
+
+参数 描述
+
+ToUserName 开发者微信号
+
+FromUserName 发送方账号（一个OpenID）
+
+CreateTime 消息创建时间 （整型）
+
+MsgType 小视频为shortvideo
+
+MediaId 视频消息媒体id，可以调用获取临时素材接口拉取数据。
+
+ThumbMediaId 视频消息缩略图的媒体id，可以调用获取临时素材接口拉取数据。
+
+MsgId 消息id，64位整型
+
+MsgDataId 消息的数据ID（消息如果来自文章时才有）
+
+Idx 多图文时第几篇文章，从1开始（消息如果来自文章时才有）
+
+使用网页调试工具调试该接口
+
+# 地理位置消息
+
+<code><span class="token tag"><span class="token tag"><span class="token punctuation"><</span>xml</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ToUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[toUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ToUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>FromUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[fromUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>FromUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>CreateTime</span><span class="token punctuation">></span></span>1351776360<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>CreateTime</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgType</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[location]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgType</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Location_X</span><span class="token punctuation">></span></span>23.134521<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Location_X</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Location_Y</span><span class="token punctuation">></span></span>113.358803<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Location_Y</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Scale</span><span class="token punctuation">></span></span>20<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Scale</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Label</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[位置信息]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Label</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgId</span><span class="token punctuation">></span></span>1234567890123456<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgDataId</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgDataId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Idx</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Idx</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>xml</span><span class="token punctuation">></span></span>
+
+</code>
+
+参数 描述
+
+ToUserName 开发者微信号
+
+FromUserName 发送方账号（一个OpenID）
+
+CreateTime 消息创建时间 （整型）
+
+MsgType 消息类型，地理位置为location
+
+Location_X 地理位置纬度
+
+Location_Y 地理位置经度
+
+Scale 地图缩放大小
+
+Label 地理位置信息
+
+MsgId 消息id，64位整型
+
+MsgDataId 消息的数据ID（消息如果来自文章时才有）
+
+Idx 多图文时第几篇文章，从1开始（消息如果来自文章时才有）
+
+使用网页调试工具调试该接口
+
+# 链接消息
+
+<code><span class="token tag"><span class="token tag"><span class="token punctuation"><</span>xml</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>ToUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[toUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>ToUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>FromUserName</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[fromUser]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>FromUserName</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>CreateTime</span><span class="token punctuation">></span></span>1351776360<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>CreateTime</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgType</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[link]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgType</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Title</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[公众平台官网链接]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Title</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Description</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[公众平台官网链接]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Description</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Url</span><span class="token punctuation">></span></span><span class="token cdata"><![CDATA[url]]></span><span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Url</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgId</span><span class="token punctuation">></span></span>1234567890123456<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>MsgDataId</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>MsgDataId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"><</span>Idx</span><span class="token punctuation">></span></span>xxxx<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>Idx</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation"></</span>xml</span><span class="token punctuation">></span></span>
+
+</code>
+
+参数 描述
+
+ToUserName 接收方微信号
+
+FromUserName 发送方微信号，若为普通用户，则是一个OpenID
+
+CreateTime 消息创建时间
+
+MsgType 消息类型，链接为link
+
+Title 消息标题
+
+Description 消息描述
+
+Url 消息链接
+
+MsgId 消息id，64位整型
+
+MsgDataId 消息的数据ID（消息如果来自文章时才有）
+
+Idx 多图文时第几篇文章，从1开始（消息如果来自文章时才有）
+
+使用网页调试工具调试该接口
+
+The translations are provided by WeChat Translation and are for reference only. In case of any inconsistency and discrepancy between the Chinese version and the English version, the Chinese version shall prevail.Incorrect translation. Tap to report.
+
+复制
+
+问题反馈
+
+反馈

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "7716f8ac-4ddb-4b35-915e-14563e854ea8",
+    "novelId": "ea07e7d1-160d-4e7b-81b7-e67fb694fa6e",
+    "name": "万茜",
+    "role": "女主角",
+    "description": "红三代  珠宝设计师",
+    "traits": "热情奔放 果敢",
+    "createdAt": "2026-06-18T05:20:52.659Z"
+  },
+  {
+    "id": "19d9451d-7076-4963-8ed5-67e343f4f1f7",
+    "novelId": "ea07e7d1-160d-4e7b-81b7-e67fb694fa6e",
+    "name": "李南琛",
+    "role": "男主",
+    "description": "红三代 外交官",
+    "traits": "外刚内柔  坚毅",
+    "createdAt": "2026-06-18T05:21:45.664Z"
+  },
+  {
+    "id": "e58ddef2-3c92-4418-a88a-5ccca421c86f",
+    "novelId": "ea07e7d1-160d-4e7b-81b7-e67fb694fa6e",
+    "name": "沈丹禾",
+    "role": "女配角一  跟女主角不分上下",
+    "description": "山区普通人家 现在全国知名助农博主",
+    "traits": "温婉大方  贤妻良母型",
+    "createdAt": "2026-06-18T05:23:19.575Z"
+  },
+  {
+    "id": "4c44212d-6a62-497b-8c7a-41ca13da24c0",
+    "novelId": "ea07e7d1-160d-4e7b-81b7-e67fb694fa6e",
+    "name": "柳菀琴",
+    "role": "女配角二",
+    "description": "出生不好，现在全国知名女性力量创始人",
+    "traits": "坚强刚毅 成熟女性",
+    "createdAt": "2026-06-18T05:24:32.307Z"
+  },
+  {
+    "id": "131604bd-afe6-4a53-9663-f9312dfa3575",
+    "novelId": "ea07e7d1-160d-4e7b-81b7-e67fb694fa6e",
+    "name": "周炎",
+    "role": "女配角",
+    "description": "书香门第  供应链总监",
+    "traits": "温柔大方 清纯",
+    "createdAt": "2026-06-18T05:25:48.507Z"
+  },
+  {
+    "id": "a5df754c-ab31-422d-a905-892e6e75f56d",
+    "novelId": "ea07e7d1-160d-4e7b-81b7-e67fb694fa6e",
+    "name": "张贝娜",
+    "role": "配角四",
+    "description": "女舞蹈老师",
+    "traits": "漂亮 热情",
+    "createdAt": "2026-06-18T05:27:11.046Z"
+  },
+  {
+    "id": "da23fd0e-a4d7-4d65-8778-1e3eb53a6a3d",
+    "novelId": "68e56023-1f2b-4a58-841b-6fb26f20c668",
+    "name": "林晓",
+    "role": "女主",
+    "description": "翻译 家境优渥",
+    "traits": "果敢",
+    "createdAt": "2026-06-19T12:42:54.706Z"
+  },
+  {
+    "id": "9cff7ff7-3a1d-413f-aaee-aa714324dd88",
+    "novelId": "68e56023-1f2b-4a58-841b-6fb26f20c668",
+    "name": "谢衍之",
+    "role": "男主",
+    "description": "帅气硬朗",
+    "traits": "固执 外刚内柔",
+    "createdAt": "2026-06-19T12:43:43.605Z"
+  },
+  {
+    "id": "01b705d7-3146-4a70-92b4-5480ac4250fb",
+    "novelId": "420225d9-c65f-45eb-893a-a93e5f9efb76",
+    "name": "谢岚",
+    "role": "女主",
+    "description": "航天工程师",
+    "traits": "聪明果敢",
+    "createdAt": "2026-06-19T12:58:46.626Z"
+  },
+  {
+    "id": "f988aa44-05dc-4c7a-a44c-63120deaf9df",
+    "novelId": "420225d9-c65f-45eb-893a-a93e5f9efb76",
+    "name": "李耀阳",
+    "role": "男主",
+    "description": "军人",
+    "traits": "硬汉 外刚内柔",
+    "createdAt": "2026-06-19T13:01:38.845Z"
+  }
+]
