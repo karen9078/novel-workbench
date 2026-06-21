@@ -1,0 +1,1 @@
+{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDEiLCJpYXQiOjE3ODIwMTcyMjgsImV4cCI6MTc4NDYwOTIyOH0.QoQLhmKP6wFQ0u-zY_eSzYrvwSLmlo7WIHuHd6_-fCo","user":{"id":"00000000-0000-0000-0000-000000000001","email":"admin@novel.com","username":"管理员"}}

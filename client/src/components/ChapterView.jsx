@@ -19,10 +19,9 @@ export default function ChapterView({ chapter, onClose, onPolish, onContinue, on
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(async () => {
       setSaving(true);
-      try {
-        await onSaveContent(editText);
-      } catch (e) {}
-      setSaving(false);
+      const ok = await onSaveContent(editText);
+      if (ok !== false) setSaving(false);
+      else setSaving(false);
     }, 2000);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [editText, editing]);

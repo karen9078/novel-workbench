@@ -109,8 +109,14 @@ export default function Outlines({ novelId }) {
 
   const handleSaveContent = async (newContent) => {
     if (!currentChapter) return;
-    await updateOutline(currentChapter.id, { content: newContent });
-    setCurrentChapter({ ...currentChapter, content: newContent });
+    try {
+      await updateOutline(currentChapter.id, { content: newContent });
+      setCurrentChapter({ ...currentChapter, content: newContent });
+      return true;
+    } catch (e) {
+      alert('❌ 保存失败，请检查网络');
+      return false;
+    }
   };
 
   const handleContinue = async (text, instruction) => {
