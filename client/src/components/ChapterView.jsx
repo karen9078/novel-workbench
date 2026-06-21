@@ -10,6 +10,7 @@ export default function ChapterView({ chapter, onClose, onPolish, onContinue, on
   const [completeAfter, setCompleteAfter] = useState('');
   const [showRevise, setShowRevise] = useState(false);
   const [reviseFeedback, setReviseFeedback] = useState('');
+  const [saveMsg, setSaveMsg] = useState('');
   const saveTimer = useRef(null);
   const [saving, setSaving] = useState(false);
 
@@ -33,9 +34,15 @@ export default function ChapterView({ chapter, onClose, onPolish, onContinue, on
     setEditing(true);
   };
 
-  const handleSave = () => {
-    onSaveContent(editText);
-    setEditing(false);
+  const handleSave = async () => {
+    setSaveMsg('⏳');
+    try {
+      await onSaveContent(editText);
+      setSaveMsg('✅');
+    } catch (e) {
+      setSaveMsg('❌');
+    }
+    setTimeout(() => setSaveMsg(''), 2000);
   };
 
   const handleCancel = () => {
@@ -97,6 +104,7 @@ export default function ChapterView({ chapter, onClose, onPolish, onContinue, on
           <>
             {saving && <span style={{ fontSize: 11, color: '#c9a84c', lineHeight: '32px' }}>⏳ 保存中...</span>}
             {!saving && editText !== chapter?.content && <span style={{ fontSize: 11, color: '#b0a898', lineHeight: '32px' }}>✅ 已自动保存</span>}
+            <span style={{ fontSize: 12, fontWeight: 600, color: saveMsg === '✅' ? '#27ae60' : saveMsg === '❌' ? '#e74c3c' : '#c9a84c', lineHeight: '32px', marginRight: 4 }}>{saveMsg}</span>
             <button className="polish-btn" onClick={handleSave}>💾 保存</button>
             <button className="copy-btn" onClick={handleCancel}>取消</button>
           </>
