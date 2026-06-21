@@ -1273,5 +1273,5 @@ if (anyNovels.count === 0) {
 app.listen(PORT, () => {
   console.log(`📚 Novel Workbench Server running on http://localhost:${PORT}`);
   console.log(`👑 管理员账号: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
-  console.log(`📖 小说数: ${adminData.count || 3}`);
+  console.log(`📖 小说数: ${anyNovels.count}`);
 });
