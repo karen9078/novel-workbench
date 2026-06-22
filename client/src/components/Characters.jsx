@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getCharacters, createCharacter, deleteCharacter } from '../api';
+import { getCharacters, createCharacter, deleteCharacter, updateCharacter } from '../api';
 import Modal from './Modal';
 
 export default function Characters({ novelId }) {
@@ -15,11 +15,28 @@ export default function Characters({ novelId }) {
 
   useEffect(() => { load(); }, [novelId]);
 
+  const [editChar, setEditChar] = useState(null);
+
   const handleAdd = async () => {
     if (!form.name.trim()) return;
     await createCharacter(novelId, form);
     setForm({ name: '', role: '', description: '', traits: '' });
     setShowModal(false);
+    load();
+  };
+
+  const handleEdit = (c) => {
+    setForm({ name: c.name, role: c.role, description: c.description, traits: c.traits });
+    setEditChar(c);
+    setShowModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!form.name.trim() || !editChar) return;
+    await updateCharacter(editChar.id, form);
+    setEditChar(null);
+    setShowModal(false);
+    setForm({ name: '', role: '', description: '', traits: '' });
     load();
   };
 
@@ -49,7 +66,8 @@ export default function Characters({ novelId }) {
                   <div className="char-name">{c.name}</div>
                   <div className="char-role">{c.role} · {c.traits}</div>
                 </div>
-                <div className="char-actions">
+                <div className="char-actions" style={{ display: 'flex', gap: 4 }}>
+                  <button className="copy-btn" onClick={() => handleEdit(c)} style={{ padding: '4px 10px', fontSize: 11 }}>编辑</button>
                   <button className="delete-btn" onClick={() => handleDelete(c.id)}>删除</button>
                 </div>
               </div>
@@ -59,7 +77,7 @@ export default function Characters({ novelId }) {
       </div>
 
       {showModal && (
-        <Modal title="添加角色" onClose={() => setShowModal(false)} onConfirm={handleAdd} confirmText="添加">
+        <Modal title={editChar ? '编辑角色' : '添加角色'} onClose={() => { setShowModal(false); setEditChar(null); setForm({ name: '', role: '', description: '', traits: '' }); }} onConfirm={editChar ? handleSaveEdit : handleAdd} confirmText={editChar ? '保存' : '添加'}>
           <label>角色名称</label>
           <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="如：林晓" />
           <label>角色定位</label>
