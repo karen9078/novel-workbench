@@ -11,7 +11,7 @@ export default function Brainstorm({ novelId }) {
     setLoading(true);
     setResult('');
     try {
-      const data = await brainstorm(question);
+      const data = await brainstorm(novelId, question);
       if (data.error) setResult(`错误：${data.error}`);
       else setResult(data.result);
     } catch (e) {

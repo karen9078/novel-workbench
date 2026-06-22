@@ -568,8 +568,38 @@ app.post('/api/ai/brainstorm', auth, async (req, res) => {
     const quota = checkAndResetQuota(req.userId);
     if (!quota.allowed) return res.status(403).json({ error: quota.error, code: 'QUOTA_EXCEEDED', quota: { used: quota.used, limit: quota.limit } });
 
-    const { question } = req.body;
-    const prompt = `你是一位创意写作顾问。用户的问题是：「${question}」
+    const { novelId, question } = req.body;
+
+    // 获取小说上下文
+    let context = '';
+    if (novelId) {
+      const novel = db.prepare('SELECT title, summary, setting FROM novels WHERE id = ? AND user_id = ?').get(novelId, req.userId);
+      if (novel) {
+        const setting = JSON.parse(novel.setting || '{}');
+        context += `\n【当前小说】${novel.title}`;
+        if (novel.summary) context += `\n简介：${novel.summary}`;
+        if (setting.genre) context += `\n题材：${setting.genre}`;
+        if (setting.worldview) context += `\n世界观：${setting.worldview}`;
+        if (setting.protagonist) context += `\n主角设定：${setting.protagonist}`;
+        if (setting.theme) context += `\n主题：${setting.theme}`;
+
+        const chars = db.prepare('SELECT name, role, description FROM characters WHERE novel_id = ?').all(novelId);
+        if (chars.length > 0) {
+          context += '\n【角色列表】';
+          chars.forEach(c => { context += `\n- ${c.name}（${c.role}）：${c.description || '暂无'}`; });
+        }
+
+        const outlines = db.prepare('SELECT chapter_num, title, content FROM outlines WHERE novel_id = ? AND LENGTH(content) > 50 ORDER BY chapter_num ASC').all(novelId);
+        if (outlines.length > 0) {
+          context += `\n【已有正文 ${outlines.length} 章】`;
+          outlines.forEach(o => { context += `\n第${o.chapter_num}章 ${o.title}（${o.content.length}字）`; });
+        }
+      }
+    }
+
+    const prompt = `你是一位创意写作顾问。${context ? '请结合以下小说信息' : ''}回答用户的问题。${context}
+
+用户的问题是：「${question}」
 请给出 5 个有创意的建议，每个建议用 1-2 句话描述。用数字编号，每行一个。`;
     const result = await callDeepSeek([{ role: 'user', content: prompt }]);
     if (result && typeof result === 'string') recordUsage(req.userId, result.length);

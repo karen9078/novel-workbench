@@ -99,11 +99,11 @@ export async function updateOutline(id, data) {
   });
 }
 
-export async function brainstorm(question) {
+export async function brainstorm(novelId, question) {
   return apiFetch(`${BASE}/ai/brainstorm`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question })
+    body: JSON.stringify({ novelId, question })
   });
 }
 
