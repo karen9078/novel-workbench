@@ -356,8 +356,18 @@ export default function ConverterPage({ initialFormat, onBack }) {
             <div className="converter-result" style={{ border: `1px solid ${tip.themeColor}`, borderLeft: `4px solid ${tip.themeColor}`, background: '#faf8f5' }}>
               <div className="converter-result-header" style={{ borderBottom: '1px solid #e8e2d8' }}>
                 <span>{FORMATS.find(f => f.id === format)?.icon} {format === 'check' ? '检测结果' : `第${selectedChapter}章 · ${FORMATS.find(f => f.id === format)?.label}`}</span>
-                <button className="converter-copy-btn" onClick={() => navigator.clipboard.writeText(result)}
-                  style={{ background: '#ece8e0', color: '#666' }}>📋 复制</button>
+                <button className="converter-copy-btn" onClick={e => {
+                  e.preventDefault();
+                  navigator.clipboard.writeText(result).catch(() => {
+                    // Fallback: 选中文本复制
+                    const ta = document.createElement('textarea');
+                    ta.value = result;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                  });
+                }} style={{ background: '#ece8e0', color: '#666' }}>📋 复制</button>
               </div>
               <pre className="converter-result-content">{result}</pre>
             </div>
