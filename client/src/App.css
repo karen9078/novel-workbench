@@ -41,6 +41,8 @@ body {
   display: flex; align-items: center; gap: 8px; margin-bottom: 2px;
 }
 .menu-item:hover { background: #ece8e0; color: #333; }
+.menu-item:hover .sidebar-delete-btn { display: inline !important; }
+.sidebar-delete-btn:hover { color: #e74c3c !important; }
 .menu-item.active { background: #fff; color: #8a7a5a; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 
 .menu-divider { height: 1px; background: #e8e2d8; margin: 8px 12px; }

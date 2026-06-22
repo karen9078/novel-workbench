@@ -5,6 +5,18 @@ export default function Sidebar({ novels, activeId, activeView, onViewChange, on
   const [worksOpen, setWorksOpen] = useState(true);
   const [writingOpen, setWritingOpen] = useState(true);
   const [aiOpen, setAiOpen] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`确定要删除《${title}》吗？\n删除后不可恢复！`)) return;
+    try {
+      const { deleteNovel } = await import('../api');
+      await deleteNovel(id);
+      window.location.reload();
+    } catch (e) {
+      alert('删除失败');
+    }
+  };
 
   const renderNovelGroup = (icon, label, items) => {
     if (items.length === 0) return null;
@@ -23,6 +35,10 @@ export default function Sidebar({ novels, activeId, activeView, onViewChange, on
             <span style={{ fontSize: 10, color: '#b0a898', marginLeft: 6, flexShrink: 0 }}>
               {n.totalWords ? (n.totalWords > 1000 ? `${(n.totalWords / 1000).toFixed(0)}k` : n.totalWords) : ''}字
             </span>
+            <span onClick={e => { e.stopPropagation(); handleDelete(n.id, n.title); }}
+              style={{ fontSize: 12, color: '#ccc', cursor: 'pointer', marginLeft: 4, display: 'none' }}
+              className="sidebar-delete-btn"
+              title="删除作品">✕</span>
           </div>
         ))}
       </>
