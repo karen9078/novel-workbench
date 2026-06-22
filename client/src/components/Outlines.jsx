@@ -200,6 +200,23 @@ export default function Outlines({ novelId }) {
             </button>
           </div>
 
+          {outlines.length > 0 && !genOutlineLoading && (
+            <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
+              <span style={{ fontSize: 12, color: '#b0a898' }}>已有 {outlines.length} 章节纲</span>
+              <button className="gold-btn" style={{ padding: '4px 12px', fontSize: 11 }} onClick={() => {
+                if (window.confirm('重新生成会删除所有现有章纲，确定吗？')) {
+                  // 先删除所有现有章纲
+                  Promise.all(outlines.map(o => deleteOutline(o.id))).then(() => {
+                    setOutlines([]);
+                    handleGenOutline();
+                  });
+                }
+              }}>
+                🔄 重新生成章纲
+              </button>
+            </div>
+          )}
+
           {genOutlineLoading && (
             <div className="brainstorm-loading" style={{ marginBottom: 12 }}>
               AI 正在生成 10 章章纲...
